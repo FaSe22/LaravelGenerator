@@ -2,6 +2,7 @@
 
 namespace Fase\LaravelGenerator;
 
+use Fase\LaravelGenerator\Commands\GenerateCode;
 use Fase\LaravelGenerator\Commands\GenerateTest;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -21,7 +22,14 @@ class LaravelGeneratorServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_laravelgenerator_table')
-            ->hasCommands([GenerateTestCase::class, GenerateTest::class]);
+            ->hasCommands([
+                GenerateTestCase::class, GenerateTest::class, GenerateCode::class
+            ]);
+    }
+
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__ . '/config/config.php', 'generator');
     }
 
     public function boot()
@@ -30,8 +38,12 @@ class LaravelGeneratorServiceProvider extends PackageServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 GenerateTestCase::class,
-                GenerateTest::class
+                GenerateTest::class,
+                GenerateCode::class
             ]);
+            $this->publishes([
+                __DIR__ . '/config/config.php' => config_path('generator.php'),
+            ], 'config');
         }
     }
 }

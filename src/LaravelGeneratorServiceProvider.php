@@ -2,6 +2,7 @@
 
 namespace Fase\LaravelGenerator;
 
+use Fase\LaravelGenerator\Commands\GenerateTest;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Fase\LaravelGenerator\Commands\GenerateTestCase;
@@ -20,7 +21,7 @@ class LaravelGeneratorServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_laravelgenerator_table')
-            ->hasCommand(GenerateTestCase::class);
+            ->hasCommands([GenerateTestCase::class, GenerateTest::class]);
     }
 
     public function boot()
@@ -29,6 +30,7 @@ class LaravelGeneratorServiceProvider extends PackageServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 GenerateTestCase::class,
+                GenerateTest::class
             ]);
         }
     }

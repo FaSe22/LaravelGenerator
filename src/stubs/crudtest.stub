@@ -1,0 +1,123 @@
+<?php
+
+use App\Models\$TYPE_NAME$;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
+
+/**
+ * Helper function to send GraphQL request.
+ */
+function graphQL(string $query, array $variables = [])
+{
+    return test()->postGraphQL([
+        'query' => $query,
+        'variables' => $variables,
+    ]);
+}
+
+it('can create a $TYPE_NAME$', function () {
+    $input = [
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'gender' => 'Male',
+        'posts' => [],
+        'team' => null,
+    ];
+
+    $response = $this->create$TYPE_NAME$($input);
+
+    expect($response)->toMatchArray([
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'gender' => 'Male',
+    ]);
+});
+
+it('can update a $TYPE_NAME$', function () {
+    $model = $TYPE_NAME$::factory()->create();
+
+    $input = [
+        'first_name' => 'Jane',
+        'last_name' => 'Doe',
+        'gender' => 'Female',
+        'posts' => [],
+        'team' => null,
+    ];
+
+    $response = $this->update$TYPE_NAME$($model->id, $input);
+
+    expect($response)->toMatchArray([
+        'id' => (string) $model->id,
+        'first_name' => 'Jane',
+        'last_name' => 'Doe',
+        'gender' => 'Female',
+    ]);
+});
+
+it('can delete a $TYPE_NAME$', function () {
+    $model = $TYPE_NAME$::factory()->create();
+
+    $response = $this->delete$TYPE_NAME$($model->id);
+
+    expect($response)->toBeTrue();
+    $this->assertDatabaseMissing('users', [
+        'id' => $model->id,
+    ]);
+});
+
+it('can find a $TYPE_NAME$', function () {
+    $model = $TYPE_NAME$::factory()->create();
+
+    $response = graphQL('
+        query user($id: ID!) {
+            user(id: $id) {
+                id
+                first_name
+                last_name
+                gender
+            }
+        }
+    ', [
+        'id' => $model->id
+    ]);
+
+    $response->assertJson([
+        'data' => [
+            'user' => [
+                'id' => (string) $model->id,
+                'first_name' => $model->first_name,
+                'last_name' => $model->last_name,
+                'gender' => $model->gender,
+            ],
+        ],
+    ]);
+});
+
+it('can retrieve all $TYPE_NAME$', function () {
+    $models = $TYPE_NAME$::factory()->count(3)->create();
+
+    $response = graphQL('
+        query {
+            users {
+                id
+                first_name
+                last_name
+                gender
+            }
+        }
+    ');
+
+    $response->assertJsonCount(3, 'data.users');
+
+    foreach ($models as $model) {
+        $response->assertJsonFragment([
+            'id' => (string) $model->id,
+            'first_name' => $model->first_name,
+            'last_name' => $model->last_name,
+            'gender' => $model->gender,
+        ]);
+    }
+});
+
+

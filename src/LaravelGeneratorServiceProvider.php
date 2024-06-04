@@ -4,6 +4,7 @@ namespace Fase\LaravelGenerator;
 
 use Fase\LaravelGenerator\Commands\GenerateCode;
 use Fase\LaravelGenerator\Commands\GenerateFactory;
+use Fase\LaravelGenerator\Commands\GenerateMigration;
 use Fase\LaravelGenerator\Commands\GenerateTest;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -24,7 +25,11 @@ class LaravelGeneratorServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasMigration('create_laravelgenerator_table')
             ->hasCommands([
-                GenerateTestCase::class, GenerateTest::class, GenerateCode::class, GenerateFactory::class
+                GenerateTestCase::class,
+                GenerateTest::class,
+                GenerateCode::class,
+                GenerateFactory::class,
+                GenerateMigration::class
             ]);
     }
 
@@ -41,7 +46,8 @@ class LaravelGeneratorServiceProvider extends PackageServiceProvider
                 GenerateTestCase::class,
                 GenerateTest::class,
                 GenerateCode::class,
-                GenerateFactory::class
+                GenerateFactory::class,
+                GenerateMigration::class
             ]);
             $this->publishes([
                 __DIR__ . '/config/config.php' => config_path('generator.php'),

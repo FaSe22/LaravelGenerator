@@ -41,10 +41,13 @@ class GenerateCode extends Command
         array_walk($flattenedTypes, function ($fields, $type) use ($choice) {
             if (in_array('CRUD', $choice)) GraphqlSchemaExtender::generateGraphQLSchema($type, $fields);
             if (in_array('Model,Factory,Migration', $choice)) {
-                Artisan::call("make:model $type -m");
+                Artisan::call("make:model $type");
                 $args = implode(" --attributes=", static::getArgs($fields));
                 Artisan::call("generate:factory $type --attributes=" . $args);
-                static::addColumns($type, $fields);
+                $columns = implode(' --attributes=', static::getCols($fields));
+                dump($columns);
+                Artisan::call("generate:migration $type --attributes=" . $columns);
+                //static::addColumns($type, $fields);
                 static::addRelations($type, $fields);
             }
             if (in_array('Policy', $choice)) Artisan::call("make:policy " . $type . "Policy --model=$type");
@@ -62,19 +65,16 @@ class GenerateCode extends Command
      *  @param array<object> $fields An array containing the fields to write as columns
      *  @throws RuntimeException if read or write operations fail
      */
-    private static  function addColumns(string $typeName, array $fields): void
+    private static  function getCols(array $fields): array
     {
-        $migrationName = 'create_' . strtolower(Str::plural(Str::snake($typeName))) . '_table';
-        $migrationFilePath = glob(database_path("migrations/*_$migrationName.php"))[0] ?? throw new RuntimeException("Migration file not found for $migrationName.");
-        $content = file_get_contents($migrationFilePath);
-        throw_if($content === false, new RuntimeException("Failed to read migration file: $migrationFilePath."));
 
         $fields = array_filter($fields, function ($key) {
             return !in_array($key, config('generator.migration.ignore_fields'));
         }, ARRAY_FILTER_USE_KEY);
 
 
-        $columns = array_reduce($fields, function ($columns, $field) {
+        $res = [];
+        array_map(function ($field) use (&$res) {
             list($type, $name) = !$field->directive ?
                 [strtolower($field->type), $field->name] : ($field->directive == 'belongsTo' ?
                     ["foreignId", $field->name . "_id"] :
@@ -83,17 +83,13 @@ class GenerateCode extends Command
             //TODO: mappings, z.b. int -> integer
 
             if ($type && $name) {
-                $columns .= $field->is_required
-                    ? "\$table->$type('$name');\n          "
-                    : "\$table->$type('$name')->nullable();\n          ";
+                $res[] = $field->is_required
+                    ? "\$table->$type('" . $name . "');" . PHP_EOL
+                    : "\$table->$type('" . $name . "')->nullable();" . PHP_EOL;
             }
-            return $columns;
-        }, '');
+        }, $fields);
 
-        $generatedContent = str_replace('$table->id();',  $columns, $content);
-
-
-        throw_if(file_put_contents($migrationFilePath, $generatedContent) === false, new RuntimeException("Failed to write migration file: $migrationFilePath."));
+        return $res;
     }
 
     /**

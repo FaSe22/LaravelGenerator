@@ -45,9 +45,7 @@ class GenerateCode extends Command
                 $args = implode(" --attributes=", static::getArgs($fields));
                 Artisan::call("generate:factory $type --attributes=" . $args);
                 $columns = implode(' --attributes=', static::getCols($fields));
-                dump($columns);
                 Artisan::call("generate:migration $type --attributes=" . $columns);
-                //static::addColumns($type, $fields);
                 static::addRelations($type, $fields);
             }
             if (in_array('Policy', $choice)) Artisan::call("make:policy " . $type . "Policy --model=$type");
@@ -59,6 +57,7 @@ class GenerateCode extends Command
     }
 
     /**
+     * TODO: Move this to generate migration command
      * Adds columns to the migration file for a given type/model.
      *
      *  @param string $typeName The name of the type/model
@@ -93,6 +92,7 @@ class GenerateCode extends Command
     }
 
     /**
+     * TODO:: move this to generate factory command
      * Adds columns to the migration file for a given type/model.
      *
      *  @param string $typeName The name of the type/model
@@ -145,7 +145,6 @@ class GenerateCode extends Command
 
         return $res;
     }
-
 
     /**
      * Adds columns to the migration file for a given type/model.

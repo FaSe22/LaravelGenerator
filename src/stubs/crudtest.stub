@@ -1,5 +1,7 @@
 <?php
 
+namespace $NAMESPACE$;
+
 use App\Models\$TYPE_NAME$;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

@@ -5,21 +5,21 @@ namespace $NAMESPACE$;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
 
-class $CLASS_NAME$TestCase extends TestCase
+class $TYPE_NAME$TestCase extends TestCase
 {
     use MakesGraphQLRequests;
 
     /**
-     * create  a $CLASS_NAME$.
+     * create  a $TYPE_NAME$.
      *
      * @param array $input
      * @return array
      */
-    protected function create$CLASS_NAME$(array $input): array
+    protected function create$TYPE_NAME$(array $input): array
     {
         $response = $this->graphQL('
-            mutation create$className($input: create$CLASS_NAME$Input!) {
-                create$CLASS_NAME$(input: $input) {
+            mutation create$TYPE_NAME$($input: create$TYPE_NAME$Input!) {
+                create$TYPE_NAME$(input: $input) {
                     id
                 }
             }
@@ -27,20 +27,20 @@ class $CLASS_NAME$TestCase extends TestCase
             'input' => $input
         ]);
 
-        return $response->json('data.create$CLASS_NAME$');
+        return $response->json('data.create$TYPE_NAME$');
     }
 
     /**
-     * update  a $CLASS_NAME$.
+     * update  a $TYPE_NAME$.
      *
      * @param array $input
      * @return array
      */
-    protected function update$CLASS_NAME$(int $id , array $input): array
+    protected function update$TYPE_NAME$(int $id , array $input): array
     {
         $response = $this->graphQL('
-            mutation update$className($id: ID!, $input: update$CLASS_NAME$Input!) {
-                update$CLASS_NAME$(id: $id, input: $input) {
+            mutation update$TYPE_NAME$($id: ID!, $input: update$TYPE_NAME$Input!) {
+                update$TYPE_NAME$(id: $id, input: $input) {
                     id
                 }
             }
@@ -49,20 +49,20 @@ class $CLASS_NAME$TestCase extends TestCase
             'input' => $input
         ]);
 
-        return $response->json('data.update$CLASS_NAME$');
+        return $response->json('data.update$TYPE_NAME$');
     }
 
     /**
-     * delete  a $CLASS_NAME$.
+     * delete  a $TYPE_NAME$.
      *
      * @param array $input
      * @return array
      */
-    protected function delete$CLASS_NAME$(int $id): array
+    protected function delete$TYPE_NAME$(int $id): array
     {
         $response = $this->graphQL('
-            mutation delete$CLASS_NAME$($id: ID!) {
-                delete$CLASS_NAME$(id: $id) {
+            mutation delete$TYPE_NAME$($id: ID!) {
+                delete$TYPE_NAME$(id: $id) {
                     id
                 }
             }
@@ -70,7 +70,7 @@ class $CLASS_NAME$TestCase extends TestCase
             'id' => $id,
         ]);
 
-        return $response->json('data.update$CLASS_NAME$');
+        return $response->json('data.update$TYPE_NAME$');
     }
 }
 

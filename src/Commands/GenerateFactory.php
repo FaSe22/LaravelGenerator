@@ -2,9 +2,8 @@
 
 namespace Fase\LaravelGenerator\Commands;
 
+use Fase\LaravelGenerator\Services\Generator;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
 
 class GenerateFactory extends Command
 {
@@ -15,32 +14,19 @@ class GenerateFactory extends Command
     {
         $name = $this->argument('name');
         $attributes = $this->option('attributes');
-
         $attributesArray = $this->parseAttributes($attributes);
+        $this->info((new Generator(
+            $name,
+            'Database\Factories',
+            __DIR__ . '/../stubs/factoryfields.stub',
+            database_path('factories/' . $name . 'Factory.php'),
+            $this->formatAttributes($attributesArray),
+        ))->run());
 
-        $stub = File::get($this->getStubPath());
-
-        $stub = str_replace(
-            ['{{ factoryNamespace }}', '{{ namespacedModel }}', '{{ factory }}', '{{ attributes }}'],
-            [$this->getFactoryNamespace(), $this->getNamespacedModel($name), $name, $this->formatAttributes($attributesArray)],
-            $stub
-        );
-
-        $filePath = database_path('factories/' . $name . 'Factory.php');
-        File::put($filePath, $stub);
 
         $this->info('Factory created successfully.');
     }
 
-    /**
-     * Return the stub file path
-     * @return string
-     *
-     */
-    public function getStubPath()
-    {
-        return __DIR__ . '/../stubs/factoryfields.stub';
-    }
 
     protected function parseAttributes(array $attributes): array
     {
@@ -52,15 +38,6 @@ class GenerateFactory extends Command
         return $parsed;
     }
 
-    protected function getFactoryNamespace(): string
-    {
-        return 'Database\Factories';
-    }
-
-    protected function getNamespacedModel(string $name): string
-    {
-        return 'App\\Models\\' . Str::singular($name);
-    }
 
     protected function formatAttributes(array $attributes): string
     {

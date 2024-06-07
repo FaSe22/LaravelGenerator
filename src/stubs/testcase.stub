@@ -1,6 +1,6 @@
 <?php
 
-namespace $NAMESPACE$;
+namespace $NAMESPACE$\$TYPE_NAME$;
 
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;

@@ -1,22 +1,12 @@
 <?php
 
-namespace $NAMESPACE$;
+namespace $NAMESPACE$\$TYPE_NAME$;
 
 use App\Models\$TYPE_NAME$;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-/**
- * Helper function to send GraphQL request.
- */
-function graphQL(string $query, array $variables = [])
-{
-    return test()->postGraphQL([
-        'query' => $query,
-        'variables' => $variables,
-    ]);
-}
 
 it('can create a $TYPE_NAME$', function () {
     $input = [

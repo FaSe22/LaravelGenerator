@@ -1,0 +1,14 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class $TYPE_NAME$ extends Model
+{
+    use HasFactory;
+
+    $ATTRIBUTES$
+}
+

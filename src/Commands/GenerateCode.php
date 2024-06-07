@@ -41,12 +41,14 @@ class GenerateCode extends Command
         array_walk($flattenedTypes, function ($fields, $type) use ($choice) {
             if (in_array('CRUD', $choice)) GraphqlSchemaExtender::generateGraphQLSchema($type, $fields);
             if (in_array('Model,Factory,Migration', $choice)) {
-                Artisan::call("make:model $type");
+                $attributes = implode(" --attributes=", static::getRelations($fields));
+                Artisan::call("generate:model $type --attributes=" . $attributes);
+
                 $args = implode(" --attributes=", static::getArgs($fields));
                 Artisan::call("generate:factory $type --attributes=" . $args);
+
                 $columns = implode(' --attributes=', static::getCols($fields));
                 Artisan::call("generate:migration $type --attributes=" . $columns);
-                static::addRelations($type, $fields);
             }
             if (in_array('Policy', $choice)) Artisan::call("make:policy " . $type . "Policy --model=$type");
             if (in_array('tests', $choice)) {
@@ -153,29 +155,17 @@ class GenerateCode extends Command
      *  @param array<object> $fields An array containing the fields to write as columns
      *  @throws RuntimeException if read or write operations fail
      */
-    private static  function addRelations(string $typeName, array $fields): void
+    private static  function getRelations(array $fields): array
     {
-        $modelFilePath = app_path("models/" . $typeName . ".php");
-        $content = file_get_contents($modelFilePath);
-        throw_if($content === false, new RuntimeException("Failed to read migration file: $modelFilePath."));
-
         $fields = array_filter($fields, function ($val) {
             return in_array($val->directive, ['belongsTo', 'hasMany', 'hasOne', 'belongsToMany']);
         });
 
+        $res = [];
+        array_map(function ($field) use (&$res) {
+            $res[] = $field->name . ":" . $field->directive . ":" . $field->type;
+        }, $fields);
 
-        $relations = array_reduce($fields, function ($relations, $field) {
-            $relations .= PHP_EOL . "\t" . 'public function ' . $field->name . '() ' . PHP_EOL .
-                "\t{" . PHP_EOL .
-                "\t\t" . 'return $this->' . $field->directive . '(' . $field->type . '::class);' . PHP_EOL .
-                "\t}" . PHP_EOL;
-            return $relations;
-        }, '');
-
-        $relations .= '}';
-
-        $generatedContent = str_replace('}',  $relations, $content);
-
-        throw_if(file_put_contents($modelFilePath, $generatedContent) === false, new RuntimeException("Failed to write migration file: $modelFilePath."));
+        return $res;
     }
 }

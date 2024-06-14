@@ -54,7 +54,7 @@ class LaravelGeneratorServiceProvider extends PackageServiceProvider
             ]);
             $this->publishes([
                 __DIR__ . '/config/config.php' => config_path('generator.php'),
-            ], 'config');
+            ], 'laravelgenerator-config');
         }
     }
 }

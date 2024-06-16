@@ -3,10 +3,11 @@
 namespace $NAMESPACE$\$TYPE_NAME$;
 
 use App\Models\$TYPE_NAME$;
+use Tests\Feature\$TYPE_NAME$\$TYPE_NAME$TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
-
+uses($TYPE_NAME$TestCase::class);
 
 it('can create a $TYPE_NAME$', function () {
     $input = [

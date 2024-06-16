@@ -54,7 +54,7 @@ class GraphqlSchemaExtender
         $content = file_get_contents($filepath);
 
         $newContent = "\n\n" . $definitions['inputType'] . $definitions['updateInputType'];
-        $newContent .= "\n\ntype Mutation {\n" . $definitions['mutations'] . "\n}\n";
+        $newContent .= "\n\n extend type Mutation {\n" . $definitions['mutations'] . "\n}\n";
         $newContent .= "\nextend type Query {\n" . $definitions['queries'] . "\n}\n";
         $newContent = str_replace("\u{00A0}", " ", $newContent);
         file_put_contents($filepath, $content . $newContent);

@@ -43,7 +43,7 @@ return [
 ];
 ```
 
-Optionally, you can publish the views using
+Optionally, you can publish the views using:
 
 ```bash
 php artisan vendor:publish --tag="laravelgenerator-views"
